@@ -29,12 +29,6 @@ module top
     .CLK_OUT3(clk_250MHz)
   );
 
-  /*
-  reg flip_50MHz = 0;
-  always @(posedge clk_100MHz)
-    flip_50MHz <= ~flip_50MHz;
-  */
-
   caleidoscope generator
   (
     .CLK_25MHz(clk_25MHz),

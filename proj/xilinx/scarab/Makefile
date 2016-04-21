@@ -13,7 +13,7 @@ openocd_interface = ../include/ft2232-generic.ocd
 xc3sprog_interface = ftdi
 
 vfiles = \
-../../../generic/top.v \
+../../../xilinx/scarab/top/top.v \
 ../../../generic/caleidoscope.v \
 ../../../generic/vga_driver.v \
 ../../../generic/vga_tb.v \
