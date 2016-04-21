@@ -12,9 +12,6 @@
         <Source name="../../../generic/vga_driver.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="../../../generic/clock_shift.v" type="Verilog" type_short="Verilog">
-            <Options/>
-        </Source>
         <Source name="../../../generic/edge_enhance.vhd" type="VHDL" type_short="VHDL">
             <Options/>
         </Source>

@@ -56,12 +56,11 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 	//clock_divider clk_div(.clk_in(CLK_50MHz), .clk_out(CLK_25MHz));
 
 	//shifts the clock by half a period (negates it)
-	//assign CLOCK_DATA = ~CLK_25MHz;
 	//see timing diagrams for a better understanding of the reason for this
-	clock_shift clk_shift(.clk_in(CLK_25MHz), .clk_out(CLK_DATA));
+	//clock_shift clk_shift(.clk_in(CLK_25MHz), .clk_out(CLK_DATA));
+        assign CLK_DATA = ~CLK_25MHz;
 
 	//##### Procedural Code
-
 	//simulate the vertical and horizontal positions
 	always @(posedge CLK_25MHz) begin
 		if(CurHPos < HLimit-1) begin
