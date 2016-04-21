@@ -43,7 +43,7 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 	parameter VSyncWidth = 2;      // v. pulse width   
 
 	//##### Local variables
-	//wire CLK_25MHz;
+	wire CLK_25MHz;
 
 	reg [9:0] CurHPos = 0; //maximum of HLimit (2^10 - 1 = 1023)
 	reg [9:0] CurVPos = 0; //maximum of VLimit
@@ -56,9 +56,9 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 	//clock_divider clk_div(.clk_in(CLK_50MHz), .clk_out(CLK_25MHz));
 
 	//shifts the clock by half a period (negates it)
-	assign CLOCK_DATA = ~CLK_25MHz;
+	//assign CLOCK_DATA = ~CLK_25MHz;
 	//see timing diagrams for a better understanding of the reason for this
-	//clock_shift clk_shift(.clk_in(CLK_25MHz), .clk_out(CLK_DATA));
+	clock_shift clk_shift(.clk_in(CLK_25MHz), .clk_out(CLK_DATA));
 
 	//##### Procedural Code
 

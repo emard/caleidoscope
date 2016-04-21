@@ -39,12 +39,6 @@ module top
   input wire spi1_miso
 );
 
-/*
-  input wire [4:1] SW,
-  output wire [2:0] TMDS_in_P, TMDS_in_N, TMDS_out_P, TMDS_out_N,
-  output wire TMDS_in_CLK_P, TMDS_in_CLK_N, TMDS_out_CLK_P, TMDS_out_CLK_N,
-  output wire [7:0] LEDS
-*/
   wire clk_25MHz, clk_50MHz, clk_125MHz, clkn_125MHz;
 
   //wire [2:0] tmds_signal_rgb;
@@ -62,28 +56,32 @@ module top
     .CLKOS2(clk_25MHz),
     .CLKOS3(clk_50MHz) // not used
   );
+  
+  reg flip_25MHz = 0;
+  always @(posedge clk_50MHz)
+    flip_25MHz <= ~flip_25MHz;
 
   caleidoscope generator
   (
-    .CLK_25MHz(clk_25MHz),
+    .CLK_25MHz(flip_25MHz),
     .RED(vga_r[7:5]),
     .GREEN(vga_g[7:5]),
     .BLUE(vga_b[7:6]),
     .VS(vga_vsync),
     .HS(vga_hsync),
     .BLANK(vga_blank),
-    .SWITCH(3'b000)
+    .SWITCH(3'b100)
   );
 
   edge_enhance filter
   (
     .clk(clk_25MHz),
-    .enable_feature(1'b0),
+    .enable_feature(1'b1),
     
     .in_blank(vga_blank),
     .in_hsync(vga_hsync),
     .in_vsync(vga_vsync),
-    .in_red(8'd100),
+    .in_red(vga_r),
     .in_green(vga_g),
     .in_blue(vga_b),
 
