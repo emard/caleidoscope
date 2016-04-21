@@ -9,8 +9,8 @@
 	Released 4/25/13
 */
 
-module caleidoscope(CLK_50MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
-	input CLK_50MHz;
+module caleidoscope(CLK_25MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
+	input CLK_25MHz;
 	input [2:0] SWITCH;
 	output VS; 
 	output HS;
@@ -27,7 +27,7 @@ module caleidoscope(CLK_50MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
 	reg [7:0] DataIn = 0;
 	
 	vga_driver vga(
-		.CLK_50MHz(CLK_50MHz),
+		.CLK_25MHz(CLK_25MHz),
 		.VS(VS),
 		.HS(HS),
 		.RED(RED),

@@ -23,19 +23,21 @@ module top
 
   pll_50M_100M_25M_250M clock_generator
   (
-    .CLK_IN1(clk_50MHz),
-    .CLK_OUT1(clk_100MHz),
+    .CLK_IN1(clk_50MHz), // not used
+    .CLK_OUT1(clk_100MHz), // not used
     .CLK_OUT2(clk_25MHz),
     .CLK_OUT3(clk_250MHz)
   );
-  
+
+  /*
   reg flip_50MHz = 0;
   always @(posedge clk_100MHz)
     flip_50MHz <= ~flip_50MHz;
+  */
 
   caleidoscope generator
   (
-    .CLK_50MHz(flip_50MHz),
+    .CLK_25MHz(clk_25MHz),
     .RED(vga_r[7:5]),
     .GREEN(vga_g[7:5]),
     .BLUE(vga_b[7:6]),

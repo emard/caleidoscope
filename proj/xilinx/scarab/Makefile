@@ -17,9 +17,6 @@ vfiles = \
 ../../../generic/caleidoscope.v \
 ../../../generic/vga_driver.v \
 ../../../generic/vga_tb.v \
-../../../generic/clock_shift.v \
-../../../generic/clock_divider.v \
-../../../generic/clock_divider_tb.v \
 ../../../soc/vgahdmi/tmds_encoder_v.v \
 ../../../soc/vgahdmi/vga2hdmi.v \
 
