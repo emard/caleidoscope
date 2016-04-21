@@ -2,7 +2,7 @@
 -- Engineer:		Mike Field <hamster@snap.net.nz>
 -- Description:	Converts VGA signals into DVID bitstreams.
 --
---	'clk' and 'clk_n' should be 5x clk_pixel.
+--	'clk' should be 5x clk_pixel.
 --
 --	'blank' should be asserted during the non-display 
 --	portions of the frame
@@ -34,27 +34,27 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity dvid is
+entity vga2hdmi_ddr is
 	Generic (
-			C_depth	: integer := 8
+		C_depth	: integer := 8
 	);
 	Port (
-			clk	: in	STD_LOGIC;
-			clk_n	: in	STD_LOGIC;
-			clk_pixel : in	STD_LOGIC;
-			red_p	: in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
-			green_p	: in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
-			blue_p	: in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
-			blank	: in	STD_LOGIC;
-			hsync	: in	STD_LOGIC;
-			vsync	: in	STD_LOGIC;
-			red_s	: out STD_LOGIC;
-			green_s	: out STD_LOGIC;
-			blue_s	: out STD_LOGIC;
-			clock_s	: out STD_LOGIC);
-end dvid;
+		clk       : in	STD_LOGIC;
+		clk_pixel : in	STD_LOGIC;
+		red_p     : in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
+		green_p   : in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
+		blue_p    : in	STD_LOGIC_VECTOR (C_depth-1 downto 0);
+		blank     : in	STD_LOGIC;
+		hsync     : in	STD_LOGIC;
+		vsync     : in	STD_LOGIC;
+		red_ddr	  : out STD_LOGIC_VECTOR(1 downto 0);
+		green_ddr : out STD_LOGIC_VECTOR(1 downto 0);
+		blue_ddr  : out STD_LOGIC_VECTOR(1 downto 0);
+		clock_ddr : out STD_LOGIC_VECTOR(1 downto 0)
+	);
+end vga2hdmi_ddr;
 
-architecture Behavioral of dvid is
+architecture Behavioral of vga2hdmi_ddr is
 
 	signal encoded_red, encoded_green, encoded_blue : std_logic_vector(9 downto 0);
 	signal latched_red, latched_green, latched_blue : std_logic_vector(9 downto 0) := (others => '0');
@@ -86,23 +86,11 @@ begin
 	u22 : entity work.TMDS_encoder PORT MAP(clk => clk_pixel, data => green_d, c => c_green, blank => blank, encoded => encoded_green);
 	u23 : entity work.TMDS_encoder PORT MAP(clk => clk_pixel, data => blue_d,  c => c_blue,  blank => blank, encoded => encoded_blue);
 
-	-- DDR vendor primitives
-	u2 : entity work.ddr_out
-	port map (clkop=>clk, clkos=>clk_n, clkout=>open, reset=>'0', sclk=>open, 
-		dataout(1 downto 0)=>shift_red(1 downto 0), dout(0)=>red_s);
-		
-	u3 : entity work.ddr_out
-	port map (clkop=>clk, clkos=>clk_n, clkout=>open, reset=>'0', sclk=>open, 
-		dataout(1 downto 0)=>shift_green(1 downto 0), dout(0)=>green_s);		
-		
-	u4 : entity work.ddr_out
-	port map (clkop=>clk, clkos=>clk_n, clkout=>open, reset=>'0', sclk=>open, 
-		dataout(1 downto 0)=>shift_blue(1 downto 0), dout(0)=>blue_s);			
-
-	u5 : entity work.ddr_out
-	port map (clkop=>clk, clkos=>clk_n, clkout=>open, reset=>'0', sclk=>open, 
-		dataout(1 downto 0)=>shift_clock(1 downto 0), dout(0)=>clock_s);
-
+	-- output ready for DDR vendor primitives
+	red_ddr   <= shift_red(1 downto 0);
+	green_ddr <= shift_green(1 downto 0);
+	blue_ddr  <= shift_blue(1 downto 0);
+	clock_ddr <= shift_clock(1 downto 0);
 
 	process(clk_pixel)
 	begin

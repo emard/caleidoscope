@@ -41,12 +41,13 @@ module top
 
   wire clk_25MHz, clk_50MHz, clk_125MHz, clkn_125MHz;
 
-  //wire [2:0] tmds_signal_rgb;
   wire [7:0] vga_r, vga_g, vga_b;
   wire vga_hsync, vga_vsync, vga_blank;
   // after edge enhancement effect filter
   wire [7:0] fx_vga_r, fx_vga_g, fx_vga_b;
   wire fx_vga_hsync, fx_vga_vsync, fx_vga_blank;
+  // last stage of generic output -> input to vendor specific DDR buffers
+  wire [1:0] red_ddr, green_ddr, blue_ddr, clock_ddr;
 
   clkgen clock_generator
   (
@@ -89,15 +90,14 @@ module top
     .out_blue(fx_vga_b)    
   );
 
-  dvid
+  vga2hdmi_ddr
   #(
     .C_depth(8) // 8-bit input
   )
-  vga_to_hdmi
+  vga_to_ddr_hdmi
   (
     .clk_pixel(clk_25MHz),
     .clk(clk_125MHz),
-    .clk_n(clkn_125MHz),
     // VGA input (clk_pixel synchronous)
     .red_p(fx_vga_r),
     .green_p(fx_vga_g),
@@ -105,7 +105,23 @@ module top
     .blank(fx_vga_blank),
     .hsync(fx_vga_hsync),
     .vsync(fx_vga_vsync),
-    // HDMI output
+    // generic output for vendor-specific DDR buffers
+    .red_ddr(red_ddr),
+    .green_ddr(green_ddr),
+    .blue_ddr(blue_ddr),
+    .clock_ddr(clock_ddr)
+  );
+
+  ddr_hdmi_out_xo2 flea_hdmi_out
+  (
+    .clk(clk_125MHz),
+    .clk_n(clkn_125MHz),
+    // generic input to DDR buffers
+    .red_ddr(red_ddr),
+    .green_ddr(green_ddr),
+    .blue_ddr(blue_ddr),
+    .clock_ddr(clock_ddr),
+    // HDMI output from DDR buffers
     .red_s(LVDS_Red),
     .green_s(LVDS_Green),
     .blue_s(LVDS_Blue),
