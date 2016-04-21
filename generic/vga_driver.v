@@ -8,7 +8,7 @@
 	Released 4/25/13
 */
 
-module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CURX, CURY, CLK_DATA, COLOR_DATA_IN);
+module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CURX, CURY, COLOR_DATA_IN);
 	//##### IO declarations
 	input CLK_25MHz;
 	output VS;
@@ -25,7 +25,6 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 
 	//client connection I/O
 	input [7:0] COLOR_DATA_IN;
-	output CLK_DATA;
 	output [9:0] CURX; 
 	output [8:0] CURY;
 
@@ -43,6 +42,7 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 	parameter VSyncWidth = 2;      // v. pulse width   
 
 	//##### Local variables
+
 	wire CLK_25MHz;
 
 	reg [9:0] CurHPos = 0; //maximum of HLimit (2^10 - 1 = 1023)
@@ -52,15 +52,8 @@ module vga_driver(CLK_25MHz, VS, HS, RED, GREEN, BLUE, HBLANK, VBLANK, BLANK, CU
 	reg [9:0] CurrentX = 0; //maximum of HDisplayArea
 	reg [8:0] CurrentY = 0; //maximum of VDisplayArea (2^9 - 1 = 511)
 
-	//##### Submodule declaration
-	//clock_divider clk_div(.clk_in(CLK_50MHz), .clk_out(CLK_25MHz));
-
-	//shifts the clock by half a period (negates it)
-	//see timing diagrams for a better understanding of the reason for this
-	//clock_shift clk_shift(.clk_in(CLK_25MHz), .clk_out(CLK_DATA));
-        assign CLK_DATA = ~CLK_25MHz;
-
 	//##### Procedural Code
+
 	//simulate the vertical and horizontal positions
 	always @(posedge CLK_25MHz) begin
 		if(CurHPos < HLimit-1) begin

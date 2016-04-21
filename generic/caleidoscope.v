@@ -23,7 +23,6 @@ module caleidoscope(CLK_25MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
 	wire HBlank, VBlank;
 	wire [9:0] CurrentX;
 	wire [8:0] CurrentY;
-	wire CLK_DATA;
 	reg [7:0] DataIn = 0;
 	
 	vga_driver vga(
@@ -38,7 +37,6 @@ module caleidoscope(CLK_25MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
 		.BLANK(BLANK),
 		.CURX(CurrentX), 
 		.CURY(CurrentY), 
-		.CLK_DATA(CLK_DATA), 
 		.COLOR_DATA_IN(DataIn)
 	);
 
@@ -96,7 +94,8 @@ module caleidoscope(CLK_25MHz, VS, HS, BLANK, RED, GREEN, BLUE, SWITCH);
 	end
 
 	//new pixel: calculate our new X value and the pixel value
-	always @(posedge CLK_DATA) begin
+	// trigger on negative edge, when data are ready
+	always @(negedge CLK_25MHz) begin
 		NewX = (CurrentX < 320) ? CurrentX : 640 - CurrentX - 1;
 		Xored = NewX ^ NewY;
 
