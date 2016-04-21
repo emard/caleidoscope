@@ -29,18 +29,9 @@ module top
     .CLK_OUT3(clk_250MHz)
   );
 
-  // flipflop clock dividers (dirty but works)
-  reg flip_50MHz = 0;
-  always @(posedge clk_100MHz)
-    flip_50MHz <= ~flip_50MHz;
-  
-  reg flip_25MHz = 0;
-  always @(posedge flip_50MHz)
-    flip_25MHz <= ~flip_25MHz;
-
   caleidoscope generator
   (
-    .CLK_25MHz(flip_25MHz),
+    .CLK_25MHz(clk_25MHz),
     .RED(vga_r[7:5]),
     .GREEN(vga_g[7:5]),
     .BLUE(vga_b[7:6]),
