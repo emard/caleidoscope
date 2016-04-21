@@ -57,13 +57,9 @@ module top
     .CLKOS3(clk_50MHz) // not used
   );
   
-  reg flip_25MHz = 0;
-  always @(posedge clk_50MHz)
-    flip_25MHz <= ~flip_25MHz;
-
   caleidoscope generator
   (
-    .CLK_25MHz(flip_25MHz),
+    .CLK_25MHz(clk_25MHz),
     .RED(vga_r[7:5]),
     .GREEN(vga_g[7:5]),
     .BLUE(vga_b[7:6]),
