@@ -16,7 +16,7 @@ vfiles = \
 ../../../xilinx/scarab/top/top.v \
 ../../../generic/caleidoscope.v \
 ../../../generic/vga_driver.v \
-../../../generic/vga_tb.v \
+../../../generic/clock_shift.v \
 ../../../soc/vgahdmi/tmds_encoder_v.v \
 ../../../soc/vgahdmi/vga2hdmi.v \
 
