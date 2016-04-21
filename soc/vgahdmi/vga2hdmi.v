@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////
 module vga2hdmi(
         input wire pixclk, /* 25 MHz */
-        input wire clk_TMDS, /* 250 MHz (set to 0 for VGA-only) */
+        input wire pixclk_x10, /* 250 MHz (must be in phase with 25MHz) */
         input wire vga_hsync, vga_vsync, vga_blank,
         input wire [7:0] vga_r, vga_g, vga_b,
 	output wire [2:0] tmds_out_rgb
@@ -50,9 +50,9 @@ TMDS_encoder_v encode_B
 reg [3:0] TMDS_mod10=0;  // modulus 10 counter
 reg [9:0] TMDS_shift_red=0, TMDS_shift_green=0, TMDS_shift_blue=0;
 reg TMDS_shift_load=0;
-always @(posedge clk_TMDS) TMDS_shift_load <= (TMDS_mod10==4'd9);
+always @(posedge pixclk_x10) TMDS_shift_load <= (TMDS_mod10==4'd9);
 
-always @(posedge clk_TMDS)
+always @(posedge pixclk_x10)
 begin
 	TMDS_shift_red   <= TMDS_shift_load ? TMDS_red   : TMDS_shift_red  [9:1];
 	TMDS_shift_green <= TMDS_shift_load ? TMDS_green : TMDS_shift_green[9:1];

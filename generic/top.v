@@ -67,7 +67,7 @@ module top
 
   vga2hdmi vga_to_hdmi(
     .pixclk(clk_25MHz),
-    .clk_TMDS(clk_250MHz),
+    .pixclk_x10(clk_250MHz),
     .vga_r(fx_vga_r),
     .vga_g(fx_vga_g),
     .vga_b(fx_vga_b),
