@@ -17,14 +17,13 @@ Boards readily working:
 
 Might be easily ported to any.
 
-Combination of those two effects suggested by Goran Mahovlic.
-
 # Credits
+
+Idea to combine FreeFull's generator with Hamsterwork's edge enhancement
+came from Goran Mahovlic.
 
 (original sites where code is taken from):
 
 http://io.netgarage.org/arm/digitalcold
 
 https://github.com/hamsternz/Artix-7-HDMI-processing
-
-https://github.com/hamsternz/Artix-7-HDMI-processing/blob/master/src/edge_enhance.vhd
