@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.0" title="project" device="LFE5U-25F-6BG381I" default_implementation="project">
+    <Options/>
+    <Implementation title="project" dir="project" description="project" synthesis="synplify" default_strategy="Strategy1">
+        <Options def_top="top" top="top"/>
+        <Source name="../../../../lattice/ulx3s/top/top.v" type="Verilog" type_short="Verilog">
+            <Options top_module="top"/>
+        </Source>
+        <Source name="../../../../lattice/ulx3s/clocks/clk_25_100_125_25.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../generic/caleidoscope.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="../../../../generic/vga_driver.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="../../../../generic/edge_enhance.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../generic/line_delay.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../soc/vgahdmi/vga2hdmi_ddr.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../soc/vgahdmi/tmds_encoder.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../lattice/chip/ecp5/ddr_hdmi_out_ecp5.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../lattice/ulx3s/clocks/clk_25_100_125_25.vhd" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../constraints/ulx3s_v20.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+        <Source name="ulx3s_12f_sram.xcf" type="Programming Project File" type_short="Programming">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="ulx2s_sram1.sty"/>
+</BaliProject>
