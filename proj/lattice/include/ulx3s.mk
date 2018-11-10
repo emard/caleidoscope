@@ -10,7 +10,11 @@ DIAMONDC := $(shell find ${DIAMOND_BIN}/ -name diamondc)
 DDTCMD := $(shell find ${DIAMOND_BIN}/ -name ddtcmd)
 
 OPENOCD ?= openocd_ft232r
-OPENOCD_BASE := ../../programmer/openocd/ulx3s/
+OPENOCD_BASE := ../../programmer/openocd/ulx3s
+
+FLEAFPGA_JTAG ?= FleaFPGA-JTAG
+
+UJPROG ?= ujprog
 
 # name of the project as defined in project file
 PROJECT = project
@@ -54,13 +58,13 @@ $(PROJECT)/$(BITSTREAM_PREFIX)_sram.svf: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
 
 $(PROJECT)/$(PROJECT)_$(PROJECT).mcs: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
 	LANG=C ${DDTCMD} -dev LFE5U-$(FPGA_SIZE)F \
-	-if $< -oft -int -quad 1 -of $@
+	-if $< -oft -int -quad 4 -of $@
 
 $(PROJECT)/$(BITSTREAM_PREFIX).bit: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
 	cd $(PROJECT); ln -s $(PROJECT)_$(PROJECT).bit $(BITSTREAM_PREFIX).bit
 
 #$(PROJECT)/$(PROJECT)_$(PROJECT)_flash_is25lp032d.mcs: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
-#	LANG=C ${DDTCMD} -dev LFE5U-$(FPGA_SIZE)F -oft -advanced -format int -flashsize 32 -quad 1 -header \
+#	LANG=C ${DDTCMD} -dev LFE5U-$(FPGA_SIZE)F -oft -advanced -format int -flashsize 32 -quad 4 -header \
 #	-if $< -of $@
 
 $(PROJECT)/$(PROJECT)_$(PROJECT)_flash_is25lp032d.mcs: $(PROJECT)/$(PROJECT)_$(PROJECT).mcs
@@ -71,6 +75,7 @@ $(PROJECT)/$(BITSTREAM_PREFIX)_flash_is25lp032d.vme: $(PROJECT)/$(PROJECT)_$(PRO
 
 $(PROJECT)/$(BITSTREAM_PREFIX)_flash_is25lp032d.svf: $(PROJECT)/$(PROJECT)_$(PROJECT)_flash_is25lp032d.mcs
 	LANG=C ${DDTCMD} -oft -svfsingle -revd -maxdata 8 -if $(XCF_PREFIX)f_flash_is25lp032d.xcf -of $@
+	sed --in-place -f $(OPENOCD_BASE)/fix_flash_is25lp128f.sed $@
 
 #$(PROJECT)/$(PROJECT)_$(PROJECT)_flash_s25fl164k.mcs: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
 #	LANG=C ${DDTCMD} -dev LFE5U-$(FPGA_SIZE)F -oft -advanced -format int -flashsize 64 -quad 1 -header \
@@ -97,9 +102,18 @@ $(PROJECT)/$(BITSTREAM_PREFIX)_flash_is25lp128f.vme: $(PROJECT)/$(PROJECT)_$(PRO
 
 $(PROJECT)/$(BITSTREAM_PREFIX)_flash_is25lp128f.svf: $(PROJECT)/$(PROJECT)_$(PROJECT)_flash_is25lp128f.mcs
 	LANG=C ${DDTCMD} -oft -svfsingle -revd -maxdata 8 -if $(XCF_PREFIX)f_flash_is25lp128f.xcf -of $@
+	sed --in-place -f $(OPENOCD_BASE)/fix_flash_is25lp128f.sed $@
 
+# default programmer is "ujprog"
 program: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
+	$(UJPROG) $<
+
+# needs ft2232 cable
+program_diamond: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
 	echo pgr_project open $(XCF_PREFIX)f_sram.xcf \; pgr_program run | ${DIAMONDC}
+
+program_ujprog: $(PROJECT)/$(PROJECT)_$(PROJECT).bit
+	$(UJPROG) $<
 
 program_wifi: $(PROJECT)/$(PROJECT)_$(PROJECT)_sram.svf
 	$(OPENOCD) --file=$(OPENOCD_BASE)/remote.ocd --file=$(OPENOCD_BASE)/ecp5-$(FPGA_SIZE)f.ocd
@@ -121,10 +135,10 @@ program_ft231x: $(PROJECT)/$(BITSTREAM_PREFIX)_sram.svf
 	rm -f $(PROJECT)/$(PROJECT)_$(PROJECT)_sram.svf
 
 program_flea: $(PROJECT)/$(BITSTREAM_PREFIX)_sram.vme
-	FleaFPGA-JTAG $<
+	$(FLEAFPGA_JTAG) $<
 
 program_flea_flash: $(PROJECT)/$(BITSTREAM_PREFIX)_flash_is25lp128f.vme
-	FleaFPGA-JTAG $<
+	$(FLEAFPGA_JTAG) $<
 
 clean:
 	rm -rf $(JUNK) *~
