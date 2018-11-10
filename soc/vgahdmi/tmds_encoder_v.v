@@ -1,5 +1,5 @@
 // fpga4fun
-module TMDS_encoder_v(
+module tmds_encoder_v(
 	input clk,
 	input [7:0] VD,  // video data (red, green or blue)
 	input [1:0] CD,  // control data
