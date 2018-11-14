@@ -110,20 +110,20 @@ program_flash: $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).bit
 	$(TINYFPGASP) -w $<
 
 # generate chip-specific openocd programming file
-$(BOARD)_$(FPGA_SIZE)f.ocd: makefile ecp5-ocd.sh
+$(BOARD)_$(FPGA_SIZE)f.ocd: makefile $(INCLUDE_MAKE)/ecp5-ocd.sh
 	$(INCLUDE_MAKE)/ecp5-ocd.sh $(CHIP_ID) $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).svf > $@
 
 # program SRAM with OPENOCD using onboard ft231y (temporary)
-program_ft231x: $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).svf $(BOARD)_$(FPGA_SIZE)f.ocd
-	$(OPENOCD) --file=ft231x.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
+program_ocd: $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).svf $(BOARD)_$(FPGA_SIZE)f.ocd
+	$(OPENOCD) --file=$(INCLUDE_MAKE)/ft231x.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
 
 # program SRAM with OPENOCD with jtag pass-thru to another board
 program_ft231x2: $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).svf $(BOARD)_$(FPGA_SIZE)f.ocd
-	$(OPENOCD) --file=ft231x2.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
+	$(OPENOCD) --file=$(INCLUDE_MAKE)/ft231x2.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
 
 # program SRAM with OPENOCD with external ft232r module
 program_ft232r: $(BOARD)_$(FPGA_SIZE)f_$(PROJECT).svf $(BOARD)_$(FPGA_SIZE)f.ocd
-	$(OPENOCD) --file=ft232r.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
+	$(OPENOCD) --file=$(INCLUDE_MAKE)/ft232r.ocd --file=$(BOARD)_$(FPGA_SIZE)f.ocd
 
 JUNK = *~
 JUNK += $(PROJECT).json
