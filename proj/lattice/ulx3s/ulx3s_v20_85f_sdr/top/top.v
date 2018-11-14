@@ -23,14 +23,14 @@ module top
     .CLKOS(clk_250MHz)
   );
 
-  wire [7:0] vga_r, vga_g, vga_b;
+  wire [2:0] vga_r, vga_g, vga_b;
   wire vga_hsync, vga_vsync, vga_blank;
   caleidoscope generator
   (
     .CLK_25MHz(clk_25MHz_out),
-    .RED(vga_r[7:5]),
-    .GREEN(vga_g[7:5]),
-    .BLUE(vga_b[7:6]),
+    .RED(vga_r),
+    .GREEN(vga_g),
+    .BLUE(vga_b),
     .VS(vga_vsync),
     .HS(vga_hsync),
     .BLANK(vga_blank),
@@ -41,7 +41,7 @@ module top
   wire red_sdr, green_sdr, blue_sdr, clock_sdr;
   vga2hdmi_sdr
   #(
-    .C_depth(8) // 8-bit input
+    .C_depth(3) // 8-bit input
   )
   vga_to_sdr_hdmi
   (

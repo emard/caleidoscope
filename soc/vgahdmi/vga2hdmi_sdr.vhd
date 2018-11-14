@@ -33,9 +33,12 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity vga2hdmi_sdr is
 	Generic (
+		-- C_shift_clock_synchronizer: boolean := true; -- try to get out_clock in sync with clk_pixel
 		C_depth	: integer := 8
 	);
 	Port (
@@ -60,7 +63,12 @@ architecture Behavioral of vga2hdmi_sdr is
 	signal latched_red, latched_green, latched_blue : std_logic_vector(9 downto 0) := (others => '0');
 	signal shift_red, shift_green, shift_blue       : std_logic_vector(9 downto 0) := (others => '0');
 	signal not_blank: std_logic;
-	signal shift_clock : std_logic_vector(9 downto 0) := "0000011111";
+	constant C_shift_clock_initial: std_logic_vector(9 downto 0) := "0000011111";
+	-- signal shift_clock : std_logic_vector(9 downto 0) := C_shift_clock_initial;
+	signal shift_clock : std_logic_vector(9 downto 0) := "0011111000";
+	signal R_shift_clock_off_sync: std_logic := '0';
+	signal R_shift_clock_synchronizer: std_logic_vector(7 downto 0) := (others => '0');
+
 
 	constant c_red   : std_logic_vector(1 downto 0) := (others => '0');
 	constant c_green : std_logic_vector(1 downto 0) := (others => '0');
@@ -88,9 +96,9 @@ begin
 	blue_d(7 downto 8-C_depth)  <= blue_p(C_depth-1 downto 0);
 	-- fill vacant low bits with value repeated (so min/max value is always 0 or 255)
 	G_bits: for i in 8-C_depth-1 downto 0 generate
-		red_d(i)   <= red_p(8-C_depth);
-		green_d(i) <= green_p(8-C_depth);
-		blue_d(i)  <= blue_p(8-C_depth);
+		red_d(i)   <= red_p(0);
+		green_d(i) <= green_p(0);
+		blue_d(i)  <= blue_p(0);
 	end generate;
 	
 	not_blank <= not blank;
@@ -98,6 +106,37 @@ begin
 	u21 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => red_d,   CD => c_red,   VDE => not_blank, TMDS => encoded_red);
 	u22 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => green_d, CD => c_green, VDE => not_blank, TMDS => encoded_green);
 	u23 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => blue_d,  CD => c_blue,  VDE => not_blank, TMDS => encoded_blue);
+
+	-- G_shift_clock_synchronizer: if C_shift_clock_synchronizer generate
+	-- sampler verifies is shift_clock state synchronous with pixel_clock
+	process(clk_pixel)
+	begin
+		if rising_edge(clk_pixel) then
+			-- does 0 to 1 transition at bits 5 downto 4 happen at rising_edge of clk_pixel?
+			-- if shift_clock = C_shift_clock_initial then
+			if shift_clock(5 downto 4) = C_shift_clock_initial(5 downto 4) then -- same as above line but simplified 
+				R_shift_clock_off_sync <= '0';
+			else
+				R_shift_clock_off_sync <= '1';
+			end if;
+		end if;
+	end process;
+	-- every N cycles of clk_shift: signal to skip 1 cycle in order to get in sync
+	process(clk)
+	begin
+		if rising_edge(clk) then
+			if R_shift_clock_off_sync = '1' then
+				if R_shift_clock_synchronizer(R_shift_clock_synchronizer'high) = '1' then
+					R_shift_clock_synchronizer <= (others => '0');
+				else
+					R_shift_clock_synchronizer <= R_shift_clock_synchronizer + 1;
+				end if;
+			else
+				R_shift_clock_synchronizer <= (others => '0');
+			end if;
+		end if;
+	end process;
+	-- end generate; -- shift_clock_synchronizer
 
 	process(clk_pixel)
 	begin
@@ -111,7 +150,8 @@ begin
 	process(clk)
 	begin
 		if rising_edge(clk) then 
-		if shift_clock = "0000011111" then
+		-- if shift_clock = "0000011111" then
+		if shift_clock(5 downto 4) = C_shift_clock_initial(5 downto 4) then -- same as above line but simplified 
 			shift_red   <= latched_red;
 			shift_green <= latched_green;
 			shift_blue  <= latched_blue;
@@ -120,8 +160,10 @@ begin
 			shift_green <= "0" & shift_green(9 downto 1);
 			shift_blue  <= "0" & shift_blue (9 downto 1);
 		end if;
-		shift_clock <= shift_clock(0) & shift_clock(9 downto 1);
+		if R_shift_clock_synchronizer(R_shift_clock_synchronizer'high) = '0' then
+			shift_clock <= shift_clock(0) & shift_clock(9 downto 1);
 		end if;
+		end if; -- rising edge
 	end process;
 
 	-- output ready for SDR vendor primitives
