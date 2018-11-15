@@ -15,8 +15,8 @@ assign clk_TMDS = shiftclk;
 ////////////////////////////////////////////////////////////////////////
 reg [7:0] red, green, blue;
 reg [9:0] CounterX, CounterY;
-reg hSync, vSync, DrawArea;
-always @(posedge pixclk) DrawArea <= (CounterX<640) && (CounterY<480);
+reg hSync, vSync, Blank;
+always @(posedge pixclk) Blank <= (CounterX>=640) || (CounterY>=480);
 
 always @(posedge pixclk) CounterX <= (CounterX==799) ? 0 : CounterX+1;
 always @(posedge pixclk) if(CounterX==799) CounterY <= (CounterY==524) ? 0 : CounterY+1;
@@ -34,9 +34,9 @@ always @(posedge pixclk) blue <= CounterY[7:0] | W | A;
 
 ////////////////////////////////////////////////////////////////////////
 wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
-tmds_encoder_v encode_R(.clk(pixclk), .VD(red  ), .CD(2'b00)        , .VDE(DrawArea), .TMDS(TMDS_red));
-tmds_encoder_v encode_G(.clk(pixclk), .VD(green), .CD(2'b00)        , .VDE(DrawArea), .TMDS(TMDS_green));
-tmds_encoder_v encode_B(.clk(pixclk), .VD(blue ), .CD({vSync,hSync}), .VDE(DrawArea), .TMDS(TMDS_blue));
+tmds_encoder_v encode_R(.clk(pixclk), .VD(red  ), .CD(2'b00)        , .BLANK(Blank), .TMDS(TMDS_red));
+tmds_encoder_v encode_G(.clk(pixclk), .VD(green), .CD(2'b00)        , .BLANK(Blank), .TMDS(TMDS_green));
+tmds_encoder_v encode_B(.clk(pixclk), .VD(blue ), .CD({vSync,hSync}), .BLANK(Blank), .TMDS(TMDS_blue));
 
 ////////////////////////////////////////////////////////////////////////
 reg [3:0] TMDS_mod10=0;  // modulus 10 counter
@@ -58,7 +58,7 @@ assign blue_sdr = TMDS_shift_blue[0];
 assign clock_sdr = pixclk;
 assign hsync = hSync;
 assign vsync = vSync;
-assign blank = ~DrawArea;
+assign blank = Blank;
 endmodule
 
 ////////////////////////////////////////////////////////////////////////

@@ -81,6 +81,7 @@ module top
 
   wire [2:0] vga_r, vga_g, vga_b;
   wire vga_hsync, vga_vsync, vga_blank;
+
   /*
   caleidoscope generator
   (
@@ -116,9 +117,10 @@ module top
   // last stage of generic output -> input to vendor specific DDR buffers
   wire red_sdr, green_sdr, blue_sdr, clock_sdr;
   vga2hdmi_sdr
-//  #(
-//    .C_depth(3) // 8-bit input
-//  )
+  #(
+    .C_phase_adjust(-4),
+    .C_depth(3) // 3-bit input
+  )
   vga_to_sdr_hdmi
   (
     .clk_pixel(clk_25MHz),
@@ -137,11 +139,23 @@ module top
     .clock_sdr(clock_sdr)
   );
 
-  OBUFDS OBUFDS_clock(.I(clock_sdr), .O(gpdi_dp[3]), .OB(gpdi_dn[3]));
-  OBUFDS OBUFDS_red  (.I(red_sdr),   .O(gpdi_dp[2]), .OB(gpdi_dn[2]));
-  OBUFDS OBUFDS_green(.I(green_sdr), .O(gpdi_dp[1]), .OB(gpdi_dn[1]));
-  OBUFDS OBUFDS_blue (.I(blue_sdr),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
-  
+  // This module converts VGA to DVI using clock domain crossing
+  // it should generate green scren.
+  // it works for diamond but nor for trellis
+  //OBUFDS OBUFDS_clock(.I(clock_sdr), .O(gpdi_dp[3]), .OB(gpdi_dn[3]));
+  //OBUFDS OBUFDS_red  (.I(red_sdr),   .O(gpdi_dp[2]), .OB(gpdi_dn[2]));
+  OBUFDS OBUFDS_green(.I(green_sdr), .O(gpdi_dp[1]), .OB(gpdi_dn[1])); // trellis: GARBAGE on green channel
+  //OBUFDS OBUFDS_blue (.I(blue_sdr),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
+
+  // This module generates DVI signal from the same clock domain
+  // color test picture should appear.
+  // this works for prjtrellis
+  OBUFDS OBUFDS_clock(.I(clock_sdr_test), .O(gpdi_dp[3]), .OB(gpdi_dn[3]));
+  OBUFDS OBUFDS_red  (.I(red_sdr_test),   .O(gpdi_dp[2]), .OB(gpdi_dn[2]));
+  //OBUFDS OBUFDS_green(.I(green_sdr_test), .O(gpdi_dp[1]), .OB(gpdi_dn[1]));
+  OBUFDS OBUFDS_blue (.I(blue_sdr_test),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
+
+  // some LED visible indicators
   assign led[0] = btn;
   assign led[2] = vga_vsync;
   assign led[3] = vga_hsync;

@@ -3,7 +3,7 @@ module tmds_encoder_v(
 	input clk,
 	input [7:0] VD,  // video data (red, green or blue)
 	input [1:0] CD,  // control data
-	input VDE,  // video data enable, to choose between CD (when VDE=0) and VD (when VDE=1)
+	input BLANK,  // video data disable, to choose between CD (when BLANK=1) and VD (when BLANK=0)
 	output reg [9:0] TMDS = 0
 );
 
@@ -20,6 +20,6 @@ wire [3:0] balance_acc_new = invert_q_m ? balance_acc-balance_acc_inc : balance_
 wire [9:0] TMDS_data = {invert_q_m, q_m[8], q_m[7:0] ^ {8{invert_q_m}}};
 wire [9:0] TMDS_code = CD[1] ? (CD[0] ? 10'b1010101011 : 10'b0101010100) : (CD[0] ? 10'b0010101011 : 10'b1101010100);
 
-always @(posedge clk) TMDS <= VDE ? TMDS_data : TMDS_code;
-always @(posedge clk) balance_acc <= VDE ? balance_acc_new : 4'h0;
+always @(posedge clk) TMDS <= BLANK ? TMDS_code : TMDS_data;
+always @(posedge clk) balance_acc <= BLANK ? 4'h0 : balance_acc_new;
 endmodule
