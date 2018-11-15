@@ -64,8 +64,7 @@ architecture Behavioral of vga2hdmi_sdr is
 	signal shift_red, shift_green, shift_blue       : std_logic_vector(9 downto 0) := (others => '0');
 	signal not_blank: std_logic;
 	constant C_shift_clock_initial: std_logic_vector(9 downto 0) := "0000011111";
-	-- signal shift_clock : std_logic_vector(9 downto 0) := C_shift_clock_initial;
-	signal shift_clock : std_logic_vector(9 downto 0) := "0011111000";
+	signal shift_clock : std_logic_vector(9 downto 0) := C_shift_clock_initial;
 	signal R_shift_clock_off_sync: std_logic := '0';
 	signal R_shift_clock_synchronizer: std_logic_vector(7 downto 0) := (others => '0');
 
