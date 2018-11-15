@@ -24,9 +24,9 @@ FPGA_CHIP_UPPERCASE := $(shell echo $(FPGA_CHIP) | tr '[:lower:]' '[:upper:]')
 
 TOP_MODULE ?= top_module
 # design files
-VERILOG_FILES ?= top_module.v
+VERILOG_FILES ?=
 # list of files for conversion to verilog
-VHDL_TO_VERILOG_FILES ?= vhdl_module.v
+VHDL_TO_VERILOG_FILES ?=
 
 # copy 25F database to 12F and change chip id
 # in devices.json to 0x21111043

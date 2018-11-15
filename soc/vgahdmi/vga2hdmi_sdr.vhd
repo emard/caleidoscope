@@ -87,6 +87,17 @@ architecture Behavioral of vga2hdmi_sdr is
           TMDS    : out std_logic_vector(9 downto 0)
         );
         end component;
+
+        component TMDS_encoder
+        port
+        (
+          clk     : in  std_logic;
+          VD      : in  std_logic_vector(7 downto 0);
+          CD      : in  std_logic_vector(1 downto 0);
+          VDE     : in  std_logic;
+          TMDS    : out std_logic_vector(9 downto 0)
+        );
+        end component;
 begin	
 	c_blue <= vsync & hsync;
 	
@@ -102,9 +113,9 @@ begin
 	
 	not_blank <= not blank;
 
-	u21 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => red_d,   CD => c_red,   VDE => not_blank, TMDS => encoded_red);
-	u22 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => green_d, CD => c_green, VDE => not_blank, TMDS => encoded_green);
-	u23 : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => blue_d,  CD => c_blue,  VDE => not_blank, TMDS => encoded_blue);
+	enc_r : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => red_d,   CD => c_red,   VDE => not_blank, TMDS => encoded_red);
+	enc_g : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => green_d, CD => c_green, VDE => not_blank, TMDS => encoded_green);
+	enc_b : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => blue_d,  CD => c_blue,  VDE => not_blank, TMDS => encoded_blue);
 
 	-- G_shift_clock_synchronizer: if C_shift_clock_synchronizer generate
 	-- sampler verifies is shift_clock state synchronous with pixel_clock

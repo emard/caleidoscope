@@ -21,7 +21,10 @@
         <Source name="../../../../soc/vgahdmi/tmds_encoder_v.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="../../../../soc/vgahdmi/vga2hdmi_sdr.vhd" type="VHDL" type_short="VHDL">
+        <Source name="../../../../soc/vgahdmi/vga2hdmi_sdr.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="../../../../soc/vgahdmi/DVI_test.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="../../constraints/ulx3s_v20_sdr.lpf" type="Logic Preference" type_short="LPF">

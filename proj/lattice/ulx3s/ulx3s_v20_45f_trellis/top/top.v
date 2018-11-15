@@ -81,6 +81,7 @@ module top
 
   wire [2:0] vga_r, vga_g, vga_b;
   wire vga_hsync, vga_vsync, vga_blank;
+  /*
   caleidoscope generator
   (
     .CLK_25MHz(clk_25MHz),
@@ -92,13 +93,32 @@ module top
     .BLANK(vga_blank),
     .SWITCH(3'b100)
   );
+  */
+
+  wire red_sdr_test, green_sdr_test, blue_sdr_test, clock_sdr_test;
+  DVI_test testpicture
+  (
+    .pixclk(clk_25MHz),
+    .shiftclk(clk_250MHz),
+    .red_sdr(red_sdr_test),
+    .green_sdr(green_sdr_test),
+    .blue_sdr(blue_sdr_test),
+    .clock_sdr(clock_sdr_test),
+    .vsync(vga_vsync),
+    .hsync(vga_hsync),
+    .blank(vga_blank)
+  );
+
+  assign vga_r = 0;
+  assign vga_g = 1;
+  assign vga_b = 0;
 
   // last stage of generic output -> input to vendor specific DDR buffers
   wire red_sdr, green_sdr, blue_sdr, clock_sdr;
   vga2hdmi_sdr
-  #(
-    .C_depth(3) // 8-bit input
-  )
+//  #(
+//    .C_depth(3) // 8-bit input
+//  )
   vga_to_sdr_hdmi
   (
     .clk_pixel(clk_25MHz),
@@ -107,9 +127,9 @@ module top
     .red_p(vga_r),
     .green_p(vga_g),
     .blue_p(vga_b),
-    .blank(vga_blank),
-    .hsync(vga_hsync),
     .vsync(vga_vsync),
+    .hsync(vga_hsync),
+    .blank(vga_blank),
     // generic output for generic SDR buffers
     .red_sdr(red_sdr),
     .green_sdr(green_sdr),
