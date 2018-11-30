@@ -15,8 +15,7 @@ module top
   assign wifi_gpio0 = 1'b1;
 
   wire clk_25MHz_out, clk_250MHz, clk_locked;
-  clk_25_125_250_25_83
-  clock_instance
+  clk_25_125_250_25_83 ecp5_pll
   (
     .CLKI(clk_25mhz),
     .CLKOS2(clk_25MHz_out),
@@ -36,6 +35,11 @@ module top
     .BLANK(vga_blank),
     .SWITCH(3'b100)
   );
+  
+  // debug
+  //assign vga_r = 1;
+  //assign vga_g = 3;
+  //assign vga_b = 2;
 
   // last stage of generic output -> input to vendor specific DDR buffers
   wire red_sdr, green_sdr, blue_sdr, clock_sdr;
