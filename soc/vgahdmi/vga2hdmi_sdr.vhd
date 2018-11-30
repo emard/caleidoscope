@@ -67,7 +67,7 @@ architecture Behavioral of vga2hdmi_sdr is
 	signal shift_clock : std_logic_vector(9 downto 0) := C_shift_clock_initial;
 	signal R_shift_clock_off_sync: std_logic := '0';
 	signal R_shift_clock_synchronizer: std_logic_vector(7 downto 0) := (others => '0');
-
+	signal R_sync_fail: std_logic_vector(6 downto 0); -- counts sync fails, after too many, reinitialize shift_clock
 
 	constant c_red   : std_logic_vector(1 downto 0) := (others => '0');
 	constant c_green : std_logic_vector(1 downto 0) := (others => '0');
@@ -148,7 +148,7 @@ begin
 
 	process(clk)
 	begin
-		if rising_edge(clk) then 
+	    if rising_edge(clk) then
 		-- if shift_clock = "0000011111" then
 		if shift_clock(5+C_phase_adjust downto 4+C_phase_adjust) = C_shift_clock_initial(5 downto 4) then -- same as above line but simplified 
 			shift_red   <= latched_red;
@@ -161,8 +161,17 @@ begin
 		end if;
 		if R_shift_clock_synchronizer(R_shift_clock_synchronizer'high) = '0' then
 			shift_clock <= shift_clock(0) & shift_clock(9 downto 1);
+		else
+			-- synchronization failed.
+			-- after too many fails, reinitialize shift_clock
+			if R_sync_fail(R_sync_fail'high) = '1' then
+				shift_clock <= C_shift_clock_initial;
+				R_sync_fail <= (others => '0');
+			else
+				R_sync_fail <= R_sync_fail + 1;
+			end if;
 		end if;
-		end if; -- rising edge
+	    end if; -- rising edge
 	end process;
 
 	-- output ready for SDR vendor primitives
