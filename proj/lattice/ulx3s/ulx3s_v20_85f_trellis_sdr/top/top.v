@@ -4,76 +4,20 @@
 
 module top
 (
-  input clk_pin,
-  output [7:0] led_pin,
-  output [3:0] gpdi_dp_pin, gpdi_dn_pin,
-  input btn_pin,
-  output gpio0_pin
+  input clk_25mhz,
+  output [7:0] led,
+  output [3:0] gpdi_dp, gpdi_dn,
+  input btn,
+  output wifi_gpio0
 );
-
-  wire clk;
-  wire [7:0] led;
-  wire [3:0] gpdi_dp, gpdi_dn;
-  wire btn;
-  wire gpio0;
-
-  (* LOC="G2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("INPUT")) clk_buf (.B(clk_pin), .O(clk));
-
-  (* LOC="R1" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("INPUT")) btn_buf (.B(btn_pin), .O(btn));
-
-  (* LOC="B2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_0 (.B(led_pin[0]), .I(led[0]));
-  (* LOC="C2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_1 (.B(led_pin[1]), .I(led[1]));
-  (* LOC="C1" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_2 (.B(led_pin[2]), .I(led[2]));
-  (* LOC="D2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_3 (.B(led_pin[3]), .I(led[3]));
-
-  (* LOC="D1" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_4 (.B(led_pin[4]), .I(led[4]));
-  (* LOC="E2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_5 (.B(led_pin[5]), .I(led[5]));
-  (* LOC="E1" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_6 (.B(led_pin[6]), .I(led[6]));
-  (* LOC="H3" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) led_buf_7 (.B(led_pin[7]), .I(led[7]));
-
-
-  (* LOC="A16" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dp0 (.B(gpdi_dp_pin[0]), .I(gpdi_dp[0]));
-  (* LOC="B16" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dn0 (.B(gpdi_dn_pin[0]), .I(gpdi_dn[0]));
-
-  (* LOC="A14" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dp1 (.B(gpdi_dp_pin[1]), .I(gpdi_dp[1]));
-  (* LOC="C14" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dn1 (.B(gpdi_dn_pin[1]), .I(gpdi_dn[1]));
-
-  (* LOC="A12" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dp2 (.B(gpdi_dp_pin[2]), .I(gpdi_dp[2]));
-  (* LOC="A13" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dn2 (.B(gpdi_dn_pin[2]), .I(gpdi_dn[2]));
-
-  (* LOC="A17" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dp3 (.B(gpdi_dp_pin[3]), .I(gpdi_dp[3]));
-  (* LOC="B18" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpdi_buf_dn3 (.B(gpdi_dn_pin[3]), .I(gpdi_dn[3]));
-
-
-  (* LOC="L2" *) (* IO_TYPE="LVCMOS33" *)
-  TRELLIS_IO #(.DIR("OUTPUT")) gpio0_buf (.B(gpio0_pin), .I(gpio0));
-
   // Tie GPIO0, keep board from rebooting
-  assign gpio0 = 1'b1;
+  assign wifi_gpio0 = 1'b1;
 
   wire clk_25MHz, clk_250MHz, clk_locked;
   clock ecp5_pll
   (
-    .clkin_25MHz(clk),
-    .clk_25MHz(clk_25MHz),
+    .clkin_25MHz(clk_25mhz), // lowercase clk_25mhz is input clock, used only here
+    .clk_25MHz(clk_25MHz), // uppericase clk_25MHz is output clock, used in rest of design
     .clk_250MHz(clk_250MHz),
     .locked(clk_locked)
   );

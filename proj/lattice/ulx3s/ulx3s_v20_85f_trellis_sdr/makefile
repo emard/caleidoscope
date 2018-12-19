@@ -2,6 +2,8 @@ PROJECT = caleidoscope
 
 FPGA_SIZE = 85
 
+CONSTRAINTS=ulx3s_v20_segpdi.lpf
+
 TOP_MODULE = top
 # design files
 VERILOG_FILES = \
