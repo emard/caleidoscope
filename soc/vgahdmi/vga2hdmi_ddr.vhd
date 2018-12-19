@@ -76,15 +76,17 @@ begin
 	green_d(7 downto 8-C_depth)	<= green_p(C_depth-1 downto 0);
 	blue_d(7 downto 8-C_depth)	<= blue_p(C_depth-1 downto 0);
 	-- fill vacant low bits with value repeated (so min/max value is always 0 or 255)
-	G_bits: for i in 8-C_depth-1 downto 0 generate
-		red_d(i)	<= red_p((C_depth-1-i) MOD C_depth);
-		green_d(i)	<= green_p((C_depth-1-i) MOD C_depth);
-		blue_d(i)	<= blue_p((C_depth-1-i) MOD C_depth);
+	G_bits:
+	for i in 8-C_depth-1 downto 0
+	generate
+		red_d(i)	<= red_p(0);
+		green_d(i)	<= green_p(0);
+		blue_d(i)	<= blue_p(0);
 	end generate;
 	
-	u21 : entity work.TMDS_encoder PORT MAP(clk => clk_pixel, data => red_d,   c => c_red,   blank => blank, encoded => encoded_red);
-	u22 : entity work.TMDS_encoder PORT MAP(clk => clk_pixel, data => green_d, c => c_green, blank => blank, encoded => encoded_green);
-	u23 : entity work.TMDS_encoder PORT MAP(clk => clk_pixel, data => blue_d,  c => c_blue,  blank => blank, encoded => encoded_blue);
+	enc_r : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => red_d,   CD => c_red,   BLANK => blank, TMDS => encoded_red);
+	enc_g : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => green_d, CD => c_green, BLANK => blank, TMDS => encoded_green);
+	enc_b : tmds_encoder_v PORT MAP(clk => clk_pixel, VD => blue_d,  CD => c_blue,  BLANK => blank, TMDS => encoded_blue);
 
 	-- output ready for DDR vendor primitives
 	red_ddr   <= shift_red(1 downto 0);
