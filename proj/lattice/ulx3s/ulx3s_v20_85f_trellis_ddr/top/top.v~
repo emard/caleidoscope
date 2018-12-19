@@ -127,15 +127,14 @@ module top
   );
 
   wire S_ddr_clock, S_ddr_red, S_ddr_green, S_ddr_blue;
-  ODDRX1F ODDRX1F_clock(.D0(clock_ddr(0)), .D1(clock_ddr(1)), .Q(S_ddr_clock), .SCLK(clk_125MHz), .RST(0));
-  OLVDS OLVDS_clock(.I(S_ddr_clock), .O(gpdi_dp[3]), .OB(gpdi_dn[3]));
-  ODDRX1F ODDRX1F_red(.D0(red_ddr(0)), .D1(red_ddr(1)), .Q(S_ddr_red), .SCLK(clk_125MHz), .RST(0));
-  OLVDS OLVDS_red  (.I(S_ddr_red),   .O(gpdi_dp[2]), .OB(gpdi_dn[2]));
-  ODDRX1F ODDRX1F_green(.D0(green_ddr(0)), .D1(green_ddr(1)), .Q(S_ddr_green), .SCLK(clk_125MHz), .RST(0));
-  OLVDS OLVDS_green(.I(S_ddr_green), .O(gpdi_dp[1]), .OB(gpdi_dn[1]));
-  ODDRX1F ODDRX1F_blue(.D0(blue_ddr(0)), .D1(blue_ddr(1)), .Q(S_ddr_blue), .SCLK(clk_125MHz), .RST(0));
-  OLVDS OLVDS_blue (.I(S_ddr_blue),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
-
+  ODDRX1F ODDRX1F_clock(.D0(clock_ddr[0]), .D1(clock_ddr[1]), .Q(S_ddr_clock), .SCLK(clk_125MHz), .RST(0));
+//  OLVDS OLVDS_clock(.I(S_ddr_clock), .O(gpdi_dp[3]), .OB(gpdi_dn[3]));
+  ODDRX1F ODDRX1F_red(.D0(red_ddr[0]), .D1(red_ddr[1]), .Q(S_ddr_red), .SCLK(clk_125MHz), .RST(0));
+//  OLVDS OLVDS_red  (.I(S_ddr_red),   .O(gpdi_dp[2]), .OB(gpdi_dn[2]));
+  ODDRX1F ODDRX1F_green(.D0(green_ddr[0]), .D1(green_ddr[1]), .Q(S_ddr_green), .SCLK(clk_125MHz), .RST(0));
+//  OLVDS OLVDS_green(.I(S_ddr_green), .O(gpdi_dp[1]), .OB(gpdi_dn[1]));
+  ODDRX1F ODDRX1F_blue(.D0(blue_ddr[0]), .D1(blue_ddr[1]), .Q(S_ddr_blue), .SCLK(clk_125MHz), .RST(0));
+//  OLVDS OLVDS_blue (.I(S_ddr_blue),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
 
   // some LED visible indicators
   assign led[0] = btn;

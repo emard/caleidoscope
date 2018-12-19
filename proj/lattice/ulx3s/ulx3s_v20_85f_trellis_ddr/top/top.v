@@ -136,7 +136,6 @@ module top
   ODDRX1F ODDRX1F_blue(.D0(blue_ddr[0]), .D1(blue_ddr[1]), .Q(S_ddr_blue), .SCLK(clk_125MHz), .RST(0));
   OLVDS OLVDS_blue (.I(S_ddr_blue),  .O(gpdi_dp[0]), .OB(gpdi_dn[0]));
 
-
   // some LED visible indicators
   assign led[0] = btn;
   assign led[2] = vga_vsync;

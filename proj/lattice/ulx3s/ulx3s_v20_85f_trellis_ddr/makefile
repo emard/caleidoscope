@@ -15,6 +15,6 @@ VERILOG_FILES = \
   
 # list of files with .v extension for conversion to verilog .vhd -> .v
 VHDL_TO_VERILOG_FILES = \
-  ../../../../soc/vgahdmi/vga2hdmi_sdr.v \
+  ../../../../soc/vgahdmi/vga2hdmi_ddr.v \
 
 include ../../include/trellis/makefile
