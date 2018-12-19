@@ -77,22 +77,29 @@ module top
   ODDRX1F ODDRX1F_red(.D0(red_ddr[0]), .D1(red_ddr[1]), .Q(S_ddr_red), .SCLK(clk_125MHz), .RST(0));
   ODDRX1F ODDRX1F_green(.D0(green_ddr[0]), .D1(green_ddr[1]), .Q(S_ddr_green), .SCLK(clk_125MHz), .RST(0));
   ODDRX1F ODDRX1F_blue(.D0(blue_ddr[0]), .D1(blue_ddr[1]), .Q(S_ddr_blue), .SCLK(clk_125MHz), .RST(0));
- 
-/* 
+
+/*
   assign gpdi_dp[3] = S_ddr_clock;
   assign gpdi_dp[2] = S_ddr_red;
   assign gpdi_dp[1] = S_ddr_green;
   assign gpdi_dp[0] = S_ddr_blue;
 */
   
-/*
+  // fake differential: inverted inputs
+  wire [1:0] S_clock_ddrn, red_ddrn, green_ddrn, blue_ddrn;
+  assign S_clock_ddrn = ~clock_ddr;
+  assign S_red_ddrn = ~red_ddr;
+  assign S_green_ddrn = ~green_ddr;
+  assign S_blue_ddrn = ~blue_ddr;
+
   wire S_ddr_clockn, S_ddr_redn, S_ddr_greenn, S_ddr_bluen;
 
-  ODDRX1F ODDRX1F_clockn(.D0(clock_ddr[0]), .D1(clock_ddr[1]), .Q(S_ddr_clockn), .SCLK(clk_125MHz), .RST(0));
-  ODDRX1F ODDRX1F_redn(.D0(red_ddr[0]), .D1(red_ddr[1]), .Q(S_ddr_redn), .SCLK(clk_125MHz), .RST(0));
-  ODDRX1F ODDRX1F_greenn(.D0(green_ddr[0]), .D1(green_ddr[1]), .Q(S_ddr_greenn), .SCLK(clk_125MHz), .RST(0));
-  ODDRX1F ODDRX1F_bluen(.D0(blue_ddr[0]), .D1(blue_ddr[1]), .Q(S_ddr_bluen), .SCLK(clk_125MHz), .RST(0));
-  
+  ODDRX1F ODDRX1F_clockn(.D0(S_clock_ddrn[0]), .D1(S_clock_ddrn[1]), .Q(S_ddr_clockn), .SCLK(clk_125MHz), .RST(0));
+  ODDRX1F ODDRX1F_redn(.D0(S_red_ddrn[0]), .D1(S_red_ddrn[1]), .Q(S_ddr_redn), .SCLK(clk_125MHz), .RST(0));
+  ODDRX1F ODDRX1F_greenn(.D0(S_green_ddrn[0]), .D1(S_green_ddrn[1]), .Q(S_ddr_greenn), .SCLK(clk_125MHz), .RST(0));
+  ODDRX1F ODDRX1F_bluen(.D0(S_blue_ddrn[0]), .D1(S_blue_ddrn[1]), .Q(S_ddr_bluen), .SCLK(clk_125MHz), .RST(0));
+
+/*
   assign gpdi_dn[3] = S_ddr_clockn;
   assign gpdi_dn[2] = S_ddr_redn;
   assign gpdi_dn[1] = S_ddr_greenn;
